@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Manga Reader</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#111;
+color:white;
+}
+
+/* HEADER */
+
+.reader-header{
+
+position:sticky;
+
+top:0;
+
+z-index:1000;
+
+height:70px;
+
+background:#202020;
+
+display:flex;
+
+align-items:center;
+
+justify-content:space-between;
+
+padding:0 25px;
+
+box-shadow:0 2px 10px #000;
+
+}
+
+.logo{
+
+font-size:24px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+}
+
+.logo span{
+
+color:#ff4146;
+
+}
+
+.header-buttons{
+
+display:flex;
+
+gap:10px;
+
+}
+
+.header-buttons button{
+
+border:0;
+
+padding:10px 16px;
+
+border-radius:7px;
+
+cursor:pointer;
+
+background:#333;
+
+color:white;
+
+font-weight:bold;
+
+}
+
+.header-buttons button:hover{
+
+background:#ff4146;
+
+}
+
+/* CHAPTER TITLE */
+
+.chapter-header{
+
+text-align:center;
+
+padding:25px 10px;
+
+background:#181818;
+
+}
+
+.chapter-header h1{
+
+font-size:28px;
+
+margin-bottom:8px;
+
+}
+
+.chapter-header p{
+
+color:#aaa;
+
+}
+
+/* READER */
+
+.reader{
+
+width:900px;
+
+max-width:100%;
+
+margin:auto;
+
+text-align:center;
+
+}
+
+/* MANGA PAGE */
+
+.manga-page{
+
+display:block;
+
+width:100%;
+
+height:auto;
+
+margin:0 auto;
+
+}
+
+/* PAGE NUMBER */
+
+.page-number{
+
+padding:12px;
+
+background:#191919;
+
+color:#aaa;
+
+font-size:14px;
+
+}
+
+/* LOADING */
+
+.loading{
+
+padding:50px;
+
+font-size:20px;
+
+color:#aaa;
+
+}
+
+/* ERROR */
+
+.error{
+
+padding:50px;
+
+color:#ff5555;
+
+font-size:20px;
+
+}
+
+/* BOTTOM CONTROLS */
+
+.reader-controls{
+
+position:sticky;
+
+bottom:0;
+
+z-index:1000;
+
+background:#202020;
+
+padding:15px;
+
+display:flex;
+
+justify-content:center;
+
+gap:12px;
+
+flex-wrap:wrap;
+
+box-shadow:0 -2px 10px #000;
+
+}
+
+.reader-controls button{
+
+border:0;
+
+padding:12px 20px;
+
+border-radius:8px;
+
+background:#ff4146;
+
+color:white;
+
+font-weight:bold;
+
+cursor:pointer;
+
+}
+
+.reader-controls button:hover{
+
+opacity:.8;
+
+}
+
+.reader-controls button:disabled{
+
+background:#555;
+
+cursor:not-allowed;
+
+}
+
+/* MOBILE */
+
+@media(max-width:600px){
+
+.reader-header{
+
+padding:0 10px;
+
+}
+
+.logo{
+
+font-size:18px;
+
+}
+
+.header-buttons button{
+
+padding:8px;
+
+font-size:12px;
+
+}
+
+.chapter-header h1{
+
+font-size:22px;
+
+}
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- HEADER -->
+
+<header class="reader-header">
+
+
+<div
+class="logo"
+onclick="goHome()">
+
+🔥 Warnoze
+<span>Manga</span>
+
+</div>
+
+
+<div class="header-buttons">
+
+<button
+onclick="goHome()">
+
+🏠 Home
+
+</button>
+
+
+<button
+onclick="goBack()">
+
+⬅ Back
+
+</button>
+
+
+</div>
+
+
+</header>
+
+
+<!-- CHAPTER HEADER -->
+
+<section
+class="chapter-header">
+
+
+<h1
+id="chapterTitle">
+
+Loading Chapter...
+
+</h1>
+
+
+<p
+id="chapterInfo">
+
+Loading pages...
+
+</p>
+
+
+</section>
+
+
+<!-- READER -->
+
+<main
+class="reader">
+
+
+<div
+id="pages">
+
+<div
+class="loading">
+
+Loading manga pages...
+
+</div>
+
+</div>
+
+
+</main>
+
+
+<!-- CONTROLS -->
+
+<div
+class="reader-controls">
+
+
+<button
+id="previousBtn"
+onclick="previousChapter()">
+
+⬅ Previous Chapter
+
+</button>
+
+
+<button
+onclick="goToTop()">
+
+⬆ Top
+
+</button>
+
+
+<button
+onclick="toggleFullscreen()">
+
+⛶ Fullscreen
+
+</button>
+
+
+<button
+id="nextBtn"
+onclick="nextChapter()">
+
+Next Chapter ➡
+
+</button>
+
+
+</div>
+
+
+<script>
+
+
+/*
+
+==================================================
+CHAPTER SETTINGS
+==================================================
+
+Chapter 1 images:
+
+chapter1-page1.jpg
+chapter1-page2.jpg
+chapter1-page3.jpg
+
+Chapter 2 images:
+
+chapter2-page1.jpg
+chapter2-page2.jpg
+
+*/
+
+const CHAPTER_NUMBER = 1;
+
+
+/*
+
+IMPORTANT:
+
+Images isi folder mein honi chahiye:
+
+manga/
+
+├── chapter1.html
+
+├── chapter1-page1.jpg
+
+├── chapter1-page2.jpg
+
+├── chapter1-page3.jpg
+
+*/
+
+const IMAGE_EXTENSION = ".jpg";
+
+
+const MAX_PAGES = 500;
+
+
+let currentPage = 1;
+
+
+let totalPages = 0;
+
+
+/* CHAPTER NAME */
+
+const chapterName =
+"Chapter " + CHAPTER_NUMBER;
+
+
+/* LOAD CHAPTER */
+
+async function loadChapter(){
+
+
+document
+.getElementById(
+"chapterTitle"
+)
+.textContent =
+"📖 " + chapterName;
+
+
+const pageContainer =
+document
+.getElementById(
+"pages"
+);
+
+
+pageContainer.innerHTML="";
+
+
+let foundPages = [];
+
+
+/*
+
+PAGE 1 SE START KAREGA
+
+JAB TAK IMAGE MILTI RAHEGI
+
+LOAD KARTA RAHEGA
+
+*/
+
+for(
+
+let page = 1;
+
+page <= MAX_PAGES;
+
+page++
+
+){
+
+
+const imageName =
+
+"chapter" +
+
+CHAPTER_NUMBER +
+
+"-page" +
+
+page +
+
+IMAGE_EXTENSION;
+
+
+/*
+
+IMAGE CHECK
+
+*/
+
+const exists =
+await checkImage(
+imageName
+);
+
+
+if(!exists){
+
+break;
+
+}
+
+
+foundPages.push(
+imageName
+);
+
+
+}
+
+
+/* NO IMAGE */
+
+if(foundPages.length === 0){
+
+pageContainer.innerHTML = `
+
+<div class="error">
+
+❌ Chapter pages nahi mili.
+
+<br><br>
+
+Expected:
+
+chapter${CHAPTER_NUMBER}-page1.jpg
+
+</div>
+
+`;
+
+document
+.getElementById(
+"chapterInfo"
+)
+.textContent =
+"No pages found";
+
+return;
+
+}
+
+
+/* TOTAL PAGES */
+
+totalPages =
+foundPages.length;
+
+
+document
+.getElementById(
+"chapterInfo"
+)
+.textContent =
+
+totalPages +
+
+" Pages";
+
+
+/* SHOW PAGES */
+
+foundPages.forEach(
+
+(imageName,index)=>{
+
+
+const pageNumber =
+index + 1;
+
+
+/* PAGE IMAGE */
+
+const image =
+document
+.createElement(
+"img"
+);
+
+
+image
+.className =
+"manga-page";
+
+
+image
+.src =
+imageName;
+
+
+image
+.alt =
+
+chapterName +
+
+" Page " +
+
+pageNumber;
+
+
+/* PAGE NUMBER */
+
+const pageNumberBox =
+document
+.createElement(
+"div"
+);
+
+
+pageNumberBox
+.className =
+"page-number";
+
+
+pageNumberBox
+.textContent =
+
+"Chapter " +
+
+CHAPTER_NUMBER +
+
+" • Page " +
+
+pageNumber +
+
+" / " +
+
+totalPages;
+
+
+/* ADD */
+
+pageContainer
+.appendChild(
+image
+);
+
+
+pageContainer
+.appendChild(
+pageNumberBox
+);
+
+
+});
+
+
+/* BUTTONS */
+
+updateButtons();
+
+
+}
+
+
+/* CHECK IMAGE */
+
+function checkImage(
+imageName
+){
+
+return new Promise(
+
+(resolve)=>{
+
+
+const image =
+new Image();
+
+
+image.onload =
+function(){
+
+resolve(true);
+
+};
+
+
+image.onerror =
+function(){
+
+resolve(false);
+
+};
+
+
+image.src =
+imageName;
+
+
+}
+
+);
+
+}
+
+
+/* HOME */
+
+function goHome(){
+
+window.location.href =
+"index.html";
+
+}
+
+
+/* BACK */
+
+function goBack(){
+
+window.history.back();
+
+}
+
+
+/* TOP */
+
+function goToTop(){
+
+window.scrollTo({
+
+top:0,
+
+behavior:"smooth"
+
+});
+
+}
+
+
+/* FULLSCREEN */
+
+function toggleFullscreen(){
+
+if(
+!document.fullscreenElement
+){
+
+document
+.documentElement
+.requestFullscreen();
+
+}else{
+
+document
+.exitFullscreen();
+
+}
+
+}
+
+
+/* PREVIOUS CHAPTER */
+
+function previousChapter(){
+
+if(
+CHAPTER_NUMBER <= 1
+){
+
+alert(
+"Ye pehla chapter hai."
+);
+
+return;
+
+}
+
+
+const previous =
+CHAPTER_NUMBER - 1;
+
+
+window.location.href =
+
+"chapter" +
+
+previous +
+
+".html";
+
+}
+
+
+/* NEXT CHAPTER */
+
+function nextChapter(){
+
+const next =
+CHAPTER_NUMBER + 1;
+
+
+window.location.href =
+
+"chapter" +
+
+next +
+
+".html";
+
+}
+
+
+/* BUTTON STATUS */
+
+function updateButtons(){
+
+const previousBtn =
+document
+.getElementById(
+"previousBtn"
+);
+
+
+if(
+CHAPTER_NUMBER <= 1
+){
+
+previousBtn
+.disabled =
+true;
+
+}
+
+}
+
+
+/* START */
+
+loadChapter();
+
+</script>
+
+</body>
+
+</html>
