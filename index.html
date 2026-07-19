@@ -6,47 +6,23 @@
 <title>Warnoze Manga</title>
 
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
 body{
+    margin:0;
+    font-family:Arial,sans-serif;
     background:#111;
     color:white;
-    font-family:Arial,sans-serif;
 }
 
 header{
     background:#d40000;
-    padding:20px;
+    padding:15px;
     text-align:center;
-}
-
-header h1{
-    font-size:32px;
-}
-
-.search{
-    text-align:center;
-    margin:20px;
-}
-
-.search input{
-    width:90%;
-    max-width:500px;
-    padding:12px;
-    border:none;
-    border-radius:8px;
-    font-size:16px;
 }
 
 .container{
     display:flex;
     justify-content:center;
-    flex-wrap:wrap;
-    padding:20px;
+    padding:30px;
 }
 
 .card{
@@ -54,36 +30,31 @@ header h1{
     background:#222;
     border-radius:10px;
     overflow:hidden;
-    margin:20px;
-    box-shadow:0 0 10px rgba(0,0,0,.5);
+    box-shadow:0 0 10px #000;
 }
 
 .card img{
     width:100%;
-    display:block;
 }
 
-.info{
-    padding:15px;
+.card h2{
+    text-align:center;
 }
 
-.info h2{
-    margin-bottom:10px;
-}
-
-.info p{
+.card p{
+    text-align:center;
     color:#ccc;
-    margin-bottom:15px;
+    padding:0 10px;
 }
 
 button{
     width:100%;
     padding:12px;
+    border:none;
     background:#d40000;
     color:white;
-    border:none;
-    cursor:pointer;
     font-size:18px;
+    cursor:pointer;
 }
 
 button:hover{
@@ -93,50 +64,37 @@ button:hover{
 footer{
     text-align:center;
     padding:20px;
-    color:#999;
+    color:#888;
 }
 </style>
 
 </head>
-
 <body>
 
 <header>
 <h1>🔥 Warnoze Manga 🔥</h1>
 </header>
 
-<div class="search">
-<input type="text" placeholder="Search Manga...">
-</div>
-
 <div class="container">
 
 <div class="card">
 
-<img src="cover.jpg" alt="Gardni Worse">
-
-<div class="info">
+<img src="cover.jpg" alt="Cover">
 
 <h2>Gardni Worse</h2>
 
-<p>
-An action fantasy manga created by Warnoze.
-</p>
+<p>Action • Fantasy</p>
 
 <button onclick="location.href='chapter1.html'">
-📖 Read Chapter 1
+Read Chapter 1
 </button>
 
 </div>
 
 </div>
 
-</div>
-
 <footer>
-
 © 2026 Warnoze Manga
-
 </footer>
 
 </body>
